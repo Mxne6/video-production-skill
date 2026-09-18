@@ -1,0 +1,22 @@
+{
+  "task_id": "scene-render-001",
+  "tier": "L1",
+  "task_type": "render_locked_scene",
+  "scene_ids": ["s01"],
+  "input_contract": {
+    "style_mode": "editorial",
+    "theme": "ink-classic",
+    "ratio": "3:4",
+    "recipe": "M16-video"
+  },
+  "allowed_mutations": ["local HTML/CSS spacing", "asset path replacement"],
+  "forbidden_mutations": ["narration", "recipe", "style_mode", "theme", "focal point", "content claims"],
+  "expected_outputs": ["design/s01/output.png", "review/design-previews-<version>.json"],
+  "actual_model": "",
+  "reasoning_effort": "",
+  "usage": {"status": "recorded", "evidence": ""},
+  "mechanical_checks": [],
+  "worker_output": [],
+  "interventions": [],
+  "human_or_primary_review": {"status": "pending"}
+}

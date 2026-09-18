@@ -1,0 +1,27 @@
+{
+  "scene_id": "scene-01",
+  "role": "cover",
+  "duration_seconds": 5.0,
+  "ratio": "3:4",
+  "style_mode": "editorial",
+  "theme": "ink-classic",
+  "recipe": "M16-video",
+  "headline": "本幕主结论",
+  "supporting_copy": "",
+  "visual_intent": "让观众一眼看到本幕要表达的重点",
+  "media": [
+    {
+      "src": "assets/example.png",
+      "role": "primary-evidence",
+      "object_position": "center 50%",
+      "focal_point": "center"
+    }
+  ],
+  "motion": "slow-pan",
+  "subtitle_safe_area": "bottom-18%",
+  "narration_ref": "",
+  "approval": {
+    "static_scene": "pending",
+    "audio": "pending"
+  }
+}

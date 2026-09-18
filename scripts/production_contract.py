@@ -106,6 +106,22 @@ def check_design_record(p, s, report, accepted_status=('pass',)):
         need(sha(p.file(name)) == expected, s['id'] + ': changed reviewed design file: ' + name)
 
 
+def check_user_design_review(p, s):
+    manifest_path = s.get("design_preview_manifest")
+    if not manifest_path:
+        return
+    report_path = s.get("user_design_review")
+    need(report_path, s["id"] + ": user page preview approval is required before motion/export")
+    report = read(p.file(report_path))
+    need(report.get("status") == "approved" and report.get("reviewer") and report.get("notes"),
+         s["id"] + ": user page preview is not explicitly approved")
+    need(report.get("manifest") == manifest_path, s["id"] + ": user review refers to a different preview manifest")
+    need(sha(p.file(manifest_path)) == report.get("manifest_sha256"),
+         s["id"] + ": preview manifest changed; regenerate and review again")
+    for name, expected in report.get("files", {}).items():
+        need(sha(p.file(name)) == expected, s["id"] + ": reviewed preview changed: " + name)
+
+
 def production_gate(p):
     from visual_review import validate_plan
     check_spec(p)
@@ -117,4 +133,5 @@ def production_gate(p):
         path = s.get('design_review')
         need(bool(path), s['id'] + ': missing design_review; record actual static review before export')
         check_design_record(p, s, read(p.file(path)))
+        check_user_design_review(p, s)
     return True

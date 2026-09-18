@@ -1,0 +1,18 @@
+{
+  "model": null,
+  "reasoning_effort": null,
+  "source": {"path": null, "sha256": null, "new_material": null},
+  "usage": null,
+  "paid_calls": null,
+  "interventions": null,
+  "delegations": [],
+  "checks": {
+    "source_traceability": {"status": "pending", "evidence": null, "sha256": null},
+    "design": {"status": "pending", "evidence": null, "sha256": null},
+    "narration": {"status": "pending", "evidence": null, "sha256": null},
+    "captions": {"status": "pending", "evidence": null, "sha256": null},
+    "mp4": {"status": "pending", "evidence": null, "sha256": null},
+    "resume": {"status": "pending", "evidence": null, "sha256": null},
+    "local_edit_reuse": {"status": "pending", "evidence": null, "sha256": null}
+  }
+}

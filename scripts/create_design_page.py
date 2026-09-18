@@ -23,7 +23,8 @@ def create_page(project, scene, style, recipe, reason):
     if style not in limits:
         raise ValueError('Style must be swiss or editorial')
     prefix, limit = limits[style]
-    if recipe not in {f'{prefix}{n:02}' for n in range(1, limit + 1)}:
+    base_recipe = recipe[:-6] if recipe.endswith('-video') else recipe
+    if base_recipe not in {f'{prefix}{n:02}' for n in range(1, limit + 1)}:
         raise ValueError('Recipe must belong to the selected upstream style')
     if not reason.strip():
         raise ValueError('Record why the recipe fits this scene')
