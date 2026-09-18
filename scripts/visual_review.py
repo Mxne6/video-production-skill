@@ -6,7 +6,7 @@ import re
 import subprocess
 import tempfile
 from pathlib import Path
-from PIL import Image
+from PIL import Image, ImageDraw
 from playwright.sync_api import sync_playwright
 from studio import Project, browser_start, caption_css, ffmpeg, need, sha, stamp, write
 
@@ -50,8 +50,10 @@ def validate_plan(p):
     by_id = {a['id']: a for a in assets}
     for s in p.scenes():
         plan = s.get('visual_plan', {})
-        need(plan.get('medium') in ('typography', 'diagram', 'image', 'mixed') and
+        need(plan.get('medium') in ('typography', 'diagram', 'image', 'mixed', 'undecided') and
              bool(str(plan.get('reason', '')).strip()), s['id'] + ': missing visual_plan')
+        need(plan.get('medium') != 'undecided',
+             s['id'] + ': resolve visual_plan.medium from the completed scene design brief before review')
         duration = s.get('estimated_duration')
         need(isinstance(duration, (float, int)) and math.isfinite(duration) and duration > 0,
              s['id'] + ': estimated_duration must be positive')
@@ -138,6 +140,30 @@ CAPTION_PROBE = """()=>{
 }"""
 
 
+def build_contact_sheet(entries, destination, frame_width, frame_height, columns=4):
+    """Build a thumbnail strip for sequence-level visual review."""
+    if not entries:
+        return None
+    thumb_width = 270
+    thumb_height = max(1, round(frame_height * thumb_width / frame_width))
+    label_height = 30
+    columns = min(columns, len(entries))
+    rows = math.ceil(len(entries) / columns)
+    sheet = Image.new('RGB', (thumb_width * columns, (thumb_height + label_height) * rows),
+                      'white')
+    draw = ImageDraw.Draw(sheet)
+    for index, (scene_id, path) in enumerate(entries):
+        row, col = divmod(index, columns)
+        with Image.open(path) as source:
+            thumb = source.convert('RGB').resize((thumb_width, thumb_height))
+        x = col * thumb_width
+        y = row * (thumb_height + label_height)
+        sheet.paste(thumb, (x, y))
+        draw.text((x + 8, y + thumb_height + 7), scene_id, fill='black')
+    sheet.save(destination)
+    return destination
+
+
 def review(project, fps=12, render=False, selected='all'):
     p = Project(project)
     need(1 <= fps <= 60, 'Preview fps must be 1–60')
@@ -149,6 +175,18 @@ def review(project, fps=12, render=False, selected='all'):
     report = {'scope': 'pre-voice; estimated timings; no audio or approvals',
               'project_sha256': sha(p.file('project.json')), 'width': w, 'height': h,
               'fps': fps, 'scenes': [], 'issues': []}
+    from scene_design import sequence_report, validate_scene_design
+    if selected == 'all':
+        design_sequence = sequence_report(p)
+        report['scene_design'] = design_sequence
+        report['issues'].extend(design_sequence['errors'])
+    else:
+        report['scene_design'] = {'warnings': [], 'scenes': []}
+        for scene in scenes:
+            checked = validate_scene_design(p, scene)
+            report['issues'].extend(checked['errors'])
+            report['scene_design']['warnings'].extend(checked['warnings'])
+    midpoint_frames = []
     proc = None
     movie = out / 'preview.mp4'
     with tempfile.TemporaryFile() as stderr, sync_playwright() as pw:
@@ -219,6 +257,9 @@ def review(project, fps=12, render=False, selected='all'):
                                 + f'{t:.3f}s: {phrase}')
                 seek(duration/2, beat_values=beats)
                 first = page.screenshot()
+                midpoint_path = out / f'{s["id"]}-mid.png'
+                midpoint_path.write_bytes(first)
+                midpoint_frames.append((s['id'], midpoint_path))
                 seek(0, beat_values=beats); seek(duration, beat_values=beats); seek(duration/2, beat_values=beats)
                 deterministic = first == page.screenshot()
                 if not deterministic:
@@ -241,6 +282,10 @@ def review(project, fps=12, render=False, selected='all'):
                 report['issues'].extend(s['id'] + ': ' + e for e in errors)
                 page.close()
                 print('Checked ' + s['id'], flush=True)
+            contact = build_contact_sheet(midpoint_frames, out / 'contact-sheet.png', w, h)
+            if contact:
+                report['contact_sheet'] = {'path': contact.name, 'sha256': sha(contact),
+                                           'basis': 'scene midpoint frames; inspect rhythm manually'}
             if proc:
                 proc.stdin.close()
                 code = proc.wait()

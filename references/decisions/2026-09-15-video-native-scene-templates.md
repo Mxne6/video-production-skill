@@ -1,7 +1,7 @@
 # Video-native scene templates
 
 Date: 2026-09-15
-Status: accepted
+Status: superseded in part by 2026-09-18 content-first scene composition
 
 ## Problem
 
@@ -35,7 +35,7 @@ These differences are structural, not palette variants. All six continue to inhe
 
 Images are treated as explanatory evidence rather than decoration. `product-hero` and `application` reserve large inspectable wells for product and real operating-context images. `mechanism` reserves a material, structure, section, or mechanism visual above its pipeline. `proof-data` reserves a test-result, chart, or evidence image above the metric ledger. `opening` and `summary` remain typographic unless a real image materially improves recognition or closure; they must not use generic decorative imagery just to satisfy an image quota.
 
-`studio init --preset xyzchem` defaults to `opening`. Additional scenes use `create_video_scene.py`. Generic `1920x1080` projects keep the existing `assets/scene.html` and `create_design_page.py` path in the first version.
+`studio init --preset xyzchem` originally defaulted to `opening`. As of 2026-09-18, new projects default to the low-prescription `adaptive` seed and use the six structures below only as optional compatibility starters. Additional scenes still use `create_video_scene.py`. Generic `1920x1080` projects keep the existing `assets/scene.html` and `create_design_page.py` path in the first version.
 
 Social card remains the tool for covers, single-page highlights, and reusable visual references. A normal video scene does not need to run the complete social-card recipe workflow. Video-native templates do not claim `section.poster` validation coverage; they bind a viewed PNG review directly.
 
@@ -49,3 +49,7 @@ Social card remains the tool for covers, single-page highlights, and reusable vi
 ## Compatibility
 
 Existing projects are not migrated automatically. The fixed brand outro remains separate from `summary` and stays the last scene. Social-card snapshots and upstream references remain unchanged.
+
+## 2026-09-18 amendment
+
+The six-template approach fixed the lack of executable structure but over-coupled semantic intent to geometry. The accepted successor decision is `2026-09-18-content-first-scene-composition.md`: content is analyzed into a scene design brief before layout is chosen, `adaptive` is the default seed, and the six named templates remain supported without acting as routing rules.

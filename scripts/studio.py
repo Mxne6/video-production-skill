@@ -208,6 +208,8 @@ class Project:
             need(a and a.get('status') == 'ready' and a.get('path'), 'Waiting for asset '+aid)
             visit(a['path'])
         historical = [seen, s.get('beats', []), self.data['profile'], self.data.get('test_mode', False), VERSION]
+        if int(self.data.get('design_contract_version', 0) or 0) >= 1:
+            historical.append(s.get('design'))
         language = language_identity(self.language())
         return digest(historical if language is None else [*historical, language])
 
@@ -741,7 +743,7 @@ def init(path, preset='generic', duration=None, language=DEFAULT_LANGUAGE, voice
     need(scene_template is None or scene_template in VIDEO_TEMPLATES, 'Unknown video scene template: '+str(scene_template))
     need((style is None and theme is None) or preset=='xyzchem',
          '--style and --theme currently require --preset xyzchem')
-    scene_template=scene_template or ('opening' if preset=='xyzchem' else None)
+    scene_template=scene_template or ('adaptive' if preset=='xyzchem' else None)
     style,theme=validate_visual_system(style,theme)
     path.mkdir(parents=True,exist_ok=True); (path/'sources').mkdir(exist_ok=True)
     english=is_english(language)
@@ -761,6 +763,7 @@ def init(path, preset='generic', duration=None, language=DEFAULT_LANGUAGE, voice
     write(path/'project.json',{'version':1,'language':language,'title':title,'profile':profile,'voice':{'voice_id':voice_id or default_voice_id(language),'speed':1,'vol':1,'pitch':0,'text_normalization':True},'sources':[],'claims':[],'assets':[],'protected_terms':[],'waiting':waiting,'next_action':next_action,'scenes':[scene]})
     data=read(path/'project.json'); data['contract_version']=2
     if preset=='xyzchem':
+        data['design_contract_version']=1
         data['visual_system']={'style':style,'theme':theme}
         data['brand_component']={'en':'xyzchem-fixed-outro-en-v1','fr-FR':'xyzchem-fixed-outro-fr-v1'}.get(language, 'xyzchem-fixed-outro-v2')
     if duration is not None: data['duration']=duration

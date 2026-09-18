@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE_ROOT = ROOT / 'templates' / 'video'
 
 VIDEO_TEMPLATES = {
+    'adaptive': {'medium': 'undecided', 'estimate': 5.0},
     'opening': {'medium': 'typography', 'estimate': 4.0},
     'product-hero': {'medium': 'mixed', 'estimate': 5.0},
     'mechanism': {'medium': 'diagram', 'estimate': 6.0},
@@ -99,7 +100,7 @@ def create_scene_files(project, scene_id: str, template_id: str, style: str | No
         (destination / name).write_bytes(source.read_bytes())
 
     plan = {
-        'version': 1,
+        'version': 2,
         'template': template_id,
         'template_sha256': sha(source_html),
         'support_sha256': {
@@ -111,7 +112,9 @@ def create_scene_files(project, scene_id: str, template_id: str, style: str | No
         'language': language,
         'profile': {'width': VIDEO_PROFILE[0], 'height': VIDEO_PROFILE[1]},
         'status': 'draft',
-        'note': 'Starter only: redesign the composition for this content, replace placeholders, and match each image to its final display ratio before review.',
+        'note': ('Content-first starter: complete scenes[].design before review, then redesign the '
+                 'composition around its dominant information. Named templates are compatibility '
+                 'starters, not semantic routing rules.'),
     }
     _write_json(destination / 'plan.json', plan)
     return {
@@ -135,6 +138,8 @@ def new_scene_data(scene_id: str, template_id: str, style: str | None, theme: st
     narration = 'Narration to be written.' if english else '待编写旁白。'
     relative = (Path('scenes') / scene_id).as_posix()
     intents = {
+        'adaptive': ('Design the scene from its communication job and dominant information'
+                     if english else '先判断本幕传播任务与视觉主角，再决定构图'),
         'opening': 'Open with the product promise' if english else '用产品承诺建立开场',
         'product-hero': 'Show the product as the central subject' if english else '突出产品主体和关键信息',
         'mechanism': 'Explain the mechanism, sequence or relationship' if english else '解释机理、顺序或关系',
@@ -151,9 +156,29 @@ def new_scene_data(scene_id: str, template_id: str, style: str | None, theme: st
         'narration': narration,
         'caption_phrases': [narration],
         'intent': intents[template_id],
-        'visual_notes': ('Template starter only: redesign the composition for this content, remove placeholders, '
-                         'and match every image to its final display ratio.' if english else
-                         '模板仅为起点：按本幕内容重新设计构图，删除占位内容，并让图片比例匹配最终图槽。'),
+        'visual_notes': ('Complete the scene design brief first. Then redesign the composition around '
+                         'the dominant information; the starter geometry is never the design decision.'
+                         if english else
+                         '先完成本幕 design brief，再围绕视觉主角重新构图；起始 HTML 结构不能替代设计判断。'),
+        'design': {
+            'status': 'pending',
+            'message': '',
+            'viewer_task': '',
+            'dominant': '',
+            'layout_family': '',
+            'layout_signature': '',
+            'attention_order': [],
+            'on_screen': [],
+            'narration_only': [],
+            'image_role': '',
+            'visual_share': None,
+            'density': '',
+            'intensity': '',
+            'contrast_with_previous': '',
+            'composition_reason': '',
+            'whitespace_reason': '',
+            'continuity_reason': '',
+        },
         'claim_ids': [],
         'assets': [],
         'dependencies': [relative + '/video-template.css', relative + '/video-template.js'],

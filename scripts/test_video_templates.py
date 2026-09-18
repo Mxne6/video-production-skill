@@ -9,13 +9,15 @@ from video_templates import VIDEO_TEMPLATES
 
 
 class VideoTemplateTests(unittest.TestCase):
-    def test_xyzchem_init_uses_vertical_opening_template(self):
+    def test_xyzchem_init_uses_content_first_adaptive_template(self):
         with tempfile.TemporaryDirectory() as tmp:
             studio.init(tmp, preset='xyzchem', language='fr-FR')
             data = studio.read(Path(tmp) / 'project.json')
             scene = data['scenes'][0]
             self.assertEqual((data['profile']['width'], data['profile']['height']), (1080, 1440))
-            self.assertEqual(scene['template'], 'opening')
+            self.assertEqual(scene['template'], 'adaptive')
+            self.assertEqual(data['design_contract_version'], 1)
+            self.assertEqual(scene['design']['status'], 'pending')
             self.assertEqual(scene['style'], 'swiss')
             self.assertEqual(scene['theme'], 'ikb')
             self.assertEqual(scene['html'], 'scenes/s01/index.html')
@@ -28,6 +30,7 @@ class VideoTemplateTests(unittest.TestCase):
             html = (Path(tmp) / scene['html']).read_text(encoding='utf-8')
             self.assertIn('data-mode="swiss"', html)
             self.assertIn('data-accent="ikb"', html)
+            self.assertIn('data-starter-only="true"', html)
 
     def test_single_visual_axis_argument_uses_mode_default(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -54,7 +57,7 @@ class VideoTemplateTests(unittest.TestCase):
                 'assets': [], 'dependencies': [], 'beats': [], 'tail_seconds': .25,
             })
             studio.write(Path(tmp) / 'project.json', data)
-            for index, template_id in enumerate(sorted(set(VIDEO_TEMPLATES) - {'opening'}), start=2):
+            for index, template_id in enumerate(sorted(set(VIDEO_TEMPLATES) - {'adaptive'}), start=2):
                 scene_id = f's{index:02d}'
                 result = create_video_scene(tmp, scene_id, template_id)
                 self.assertEqual(result['template'], template_id)

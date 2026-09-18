@@ -2,67 +2,178 @@
 
 ## 职责与优先关系
 
-creative.md 的整片策划是唯一内容计划。视觉实现按项目类型选择入口：新义合成竖版正文使用 `templates/video/` 的可执行模板，generic 横版继续使用旧场景起点；Social card 负责封面、单页重点卡以及字体、主题和组件参考。不能把 `S06`、`M16` 等配方标签当成真实视频模板，也不能因更换主题重新编写故事。
+creative.md 决定故事和信息取舍；composition-system.md 决定每幕应该如何被看见；visual-planning.md 决定素材角色；本文件负责把这些判断落成可执行 HTML、静态审核和视频交接。
 
-原版以独立阅读的社交卡为主要场景；用于本用户的视频时，以下边界优先：
+Guizang social-card 是视觉语言和设计方法来源，不是视频页面模板库。视频继承 typography、grid、asymmetry、image-as-evidence、hairline、palette、克制层级与 Editorial / Swiss 的气质；不继承社交卡必须独立刷完一页的密度规则、M/S recipe 标签、issue strip、页码和大量静态正文。
 
-- 视频的幕数、信息取舍与时长按 creative.md，不把图文章节数或字数对应的页数当视频要求。
-- 已有用户授权为自主 image2 配图，不重复执行选图来源提问；外部提示词模式仅在用户明确选择或工具不可用时使用。图像规则统一见 visual-planning.md。
-- 视频的页眉页脚、字幕留白及图文关系按 visual-planning.md，不照搬装饰元数据条。密度 advisory 不能驱使添加重复文字；可调整真实视觉主体或换版式，也可记录有观看节奏依据的留白理由。实际溢出和不可读内容仍须修复。
-- 静态技术核验属于本项目已授权流程，不另问是否可以运行自动检查；用户实际稿件/音频/整片反馈仍按主流程保留。
-- 新义合成公司片尾用 brand-outro.md 的固定组件，这是用户指定模板，不重新设计或选片尾版式。
-- 竖版视频原生模板提供六类可选结构：`opening` 开场结论、`product-hero` 产品主体、`mechanism` 机理关系、`proof-data` 数据证据、`application` 应用场景、`summary` 正文结论。
-- 模板只决定初始结构与信息关系，主题决定 visual tokens；每幕仍需按内容重新组织构图。模板类型不是幕数清单，可跳过或复用。常规改版优先换主题、换图片或选择更合适的模板，不累计创建几十个近重复配方。
+## 新的竖版入口：adaptive 默认，named starter 兼容
 
-以上只明确视频适配范围，不修改上游快照。`references/upstream/` 是历史兼容资料，不是另一个设计入口。
-
-## 竖版视频原生模板
-
-只有 `1080×1440` 新义合成项目进入此入口。初稿必须复制真实模板，不得手工从空白 HTML 复制一套近似结构：
+只有 `1080×1440` 新义合成项目进入这一套 content-first design contract。新项目：
 
 ```powershell
-python scripts/create_video_scene.py P --scene s02 --type mechanism
+python scripts/studio.py init P --preset xyzchem --style swiss --theme ikb
 ```
 
-项目级视觉系统在建项时固定，例如 `studio init P --preset xyzchem --style swiss --theme ikb`。一个项目只能使用一个 social-card 模式和一个官方 palette，后续场景继承，不逐幕混搭。Swiss 可选 `ikb / lemon-yellow / lemon-green / safety-orange`；Editorial 可选 `ink-classic / indigo-porcelain / forest-ink / kraft-paper / dune / midnight-ink`。命令从 Skill 原始模板复制 HTML 和共享 CSS/JS，写入模板语言、模式、主题、尺寸和哈希到 `scenes/<scene>/plan.json`，并追加到固定片尾之前。英文项目必须通过该入口新建自己的场景，不得复制中文项目的 scene 后翻译文字；模板类型、scene id 和顺序由英语稿独立决定，幕数不受六类模板数量约束。模板选择按信息任务而不是装饰偏好：产品主体看 `product-hero`，过程与因果关系看 `mechanism`，数字与对比看 `proof-data`，使用场景看 `application`，正文收束看 `summary`。已有场景内容变化时使用新 scene ID 或明确的局部改版流程，不覆盖历史证据。
-
-填写模板时保留 `window.renderAt(t,duration)` 确定性接口，但默认网格、字号层级、空白图槽和标题句式只是起点，不是成品。必须根据本幕内容重新组织构图，删除空证据条、内部说明、重复标题和无效留白；只替换占位文字不算完成。把图片和字体写入项目并声明依赖，图片原图比例必须与最终图槽一致。`data-mode` 固定为 `swiss` 或 `editorial`；Swiss 按 social card 使用 `data-accent`，Editorial 使用 `data-theme`，值均取官方 palette。不得引入当前 package 外的 accent 或另一套字体。Social card 的 style-system、components、theme-presets 和 qa-checklist 是视觉权威，模板只复用其 token 和组件，不重写视觉体系。
-
-静态交付需要 1080×1440 PNG，并实际查看主体、文字、图片和字幕安全区。视频原生模板没有 `section.poster`，不运行 social card 的覆盖率校验器；审核直接绑定当前场景 HTML、PNG 和实际观察记录：
+首幕默认使用 `adaptive`。新增 scene 也默认：
 
 ```powershell
+python scripts/create_video_scene.py P --scene s02
+```
+
+如果某一幕内容真的与旧结构高度吻合，可显式选择兼容 starter：
+
+```powershell
+python scripts/create_video_scene.py P --scene s03 --type mechanism
+```
+
+可用 named starter 仍为 `opening / product-hero / mechanism / proof-data / application / summary`。它们不再决定信息结构，只是可复用的已有 DOM 起点。不得建立“产品主体 → product-hero”“数据 → proof-data”“应用 → application”的自动路由。
+
+项目级视觉系统仍固定为一个 mode + 一个官方 palette：Swiss 用 `ikb / lemon-yellow / lemon-green / safety-orange`；Editorial 用 `ink-classic / indigo-porcelain / forest-ink / kraft-paper / dune / midnight-ink`。统一来自 tokens，而不是靠每幕复制同一布局获得一致性。
+
+## Scene design contract
+
+新项目写 `design_contract_version: 1`。每幕在静态审核前必须完成 `scenes[].design`，字段语义见 composition-system.md。
+
+最关键的字段不是 template，而是：
+
+- `message`：观众这一幕真正带走什么；
+- `dominant`：第一眼视觉主角；
+- `attention_order`：真实观看顺序；
+- `on_screen / narration_only`：画面与声音分工；
+- `image_role / visual_share`：图片是否决定构图以及占幅；
+- `layout_family / layout_signature`：最终画面属于哪种构图语法、实际轮廓是什么；
+- `composition_reason`：为什么这个几何适合这幕；
+- `density / intensity / contrast_with_previous`：它在整条视频里的节奏角色。
+
+`layout_signature` 不是模板 ID。写实际视觉轮廓，例如：
+
+- `full-bleed-photo / lower-left-title`
+- `type-left / product-right-vertical`
+- `number-center / condition-bottom`
+- `section-image-top / two-annotation-edges`
+- `cause-diagonal / result-anchor-bottom`
+
+只有 brief 完成后才开始改 HTML。
+
+## Adaptive seed 的角色
+
+`templates/video/adaptive.html` 故意很少提供结构：没有默认 rail、图片区、metric grid、footer 或固定 split。它的意义与 Guizang 的 seed template 相同——固化字体加载、palette、renderAt 合约和安全的基础 primitive，把 Agent 的注意力留给“内容应该如何变形”。
+
+adaptive 初始 HTML 带 `data-starter-only="true"`。完成真正构图后必须删除该属性；`design_review.py` 会阻止仍带 starter 标记的新项目进入静态审核。
+
+共享 CSS 提供的是 grammar primitives，而不是 recipe：
+
+- `.scene-grid` + `.span-*`：12 列不对称网格；
+- `.scene-stack / .scene-row`：基本流；
+- `.type-display / .type-statement / .num-hero`：Guizang 式“越大越轻”的主体 typography；
+- `.media-block`：按实际构图定义尺寸的媒体块；
+- `.marginal / .hairline`：编辑排版关系；
+- `.scene-full-bleed / .full-bleed-media / .overlay-copy`：图片真正成为画面主体时使用。
+
+这些类可以自由组合，也可以写 scene-scoped CSS。不要因为 primitive 存在就每幕都用同一套。
+
+## 图片与构图
+
+图片必须先被定义为 hero / evidence / support / atmosphere / none，然后才决定 slot。
+
+- hero：通常至少 55% visual_share；整幕围绕图片主体、方向和 quiet zone 布局；
+- evidence：大到可检查，与 claim/数字直接邻接；
+- support：只回答一个具体次级问题；
+- atmosphere：用于节奏与环境，不能冒充证据；
+- none：不设无意义空图槽。
+
+图片原始比例与最终显示方式不兼容时，改构图或重新生成，不用 `cover` 偷偷裁掉关键主体。Social card 的 subject mapping、object-position 和 thumbnail check 方法继续有效；其具体 recipe 不直接搬过来。
+
+## Editorial / Swiss 继承边界
+
+### Swiss
+
+保留：Inter/Noto Sans、轻字重大号字、严格轴线、12 列网格、hairline、单 accent、强不对称。
+
+避免：把所有信息变成卡片矩阵、KPI dashboard、browser/landing-page 模块。数字可以是一整个画面的主体，图片可以满幅，关系也可以突破 card 容器。
+
+### Editorial
+
+保留：serif display + serif body、宽字距、纸/墨 palette、摄影与 caption、marginalia、规则线、真正有意义的留白。
+
+避免：每幕都铺 paper texture + mono kicker + issue strip，然后误以为这就是杂志。视频中 sparse scene 可以很安静，但留白必须服务主体、字幕或节奏；没有 opposite page 替它吸收欠填。
+
+## 静态审核
+
+scene 先生成 1080×1440 PNG 并实际查看，再进入 motion。新项目准备审核：
+
+```powershell
+python scripts/scene_design.py P
 python scripts/design_review.py P --scene s02 --png scenes/s02/output.png
-# 实际查看 PNG 后填写 pending 记录，再导入。
+```
+
+`design_review.py` 会：
+
+- 验证 scene design brief；
+- 阻止 adaptive starter 标记未删除的页面；
+- 把 layout_signature、dominant、image_role、visual_share、density、intensity 等写进 review 记录；
+- 写入人工查看时应回答的 prompts。
+
+实际查看 PNG 后填写 pending 记录，再导入：
+
+```powershell
 python scripts/design_review.py P --scene s02 --import-report review/design-review-s02-<版本>.json
 ```
 
-固定片尾仍走 brand-outro.md 的 create/attach 工具。generic `1920×1080` 项目继续使用 `create_design_page.py` 和原 `section.poster` validator，不套用这套竖版尺寸门禁。
+审核至少回答：
+
+1. 第一眼是否与 attention_order 一致？
+2. declared dominant 是否真的拥有最大视觉权重？
+3. 图片/数据/关系是否决定几何，而不是落进普通槽位？
+4. 画面字量是否与时长匹配，是否复读旁白？
+5. 留白是否有原因？
+6. 与前后 scene 的 silhouette 是有意义的连续还是机械重复？
+
+无溢出、可解码、字体加载成功都不能替代这些判断。
+
+## 整片 sequence review
+
+单幕 pass 不代表整条视频成立。正文 design brief 全部 ready 后运行：
+
+```powershell
+python scripts/scene_design.py P
+```
+
+默认规则：
+
+- 连续三幕同一 `layout_signature` → error；只有明确比较/连续性用途并写 `continuity_reason` 才允许；
+- 连续三幕同一 layout_family 但 silhouette 不同 → warning，提醒人工确认不是轻微变体；
+- 四幕以上全部同一 intensity → warning。
+
+这些只是机械底线。人工仍要看 contact sheet。`visual_review.py P --render` 会把每幕中点帧写成 `review/visual-*/contact-sheet.png` 并记录哈希；如果每幕都是“上方大矩形图 + 下方标题”、同一 7:5 split 或同一 rail，即使 signature 字符串写得不同，也应退回重设计。
+
+不要为了通过节奏检查随机轮换 family。视觉变化来自内容：有时强、有时静；有时图片占满、有时一句话独立；有时数字压倒一切、有时关系图主导。
 
 ## Social card 单页与封面
 
-当场景明确使用 social card 种子或单页卡片时，生成 output.png 后先单独查看，再运行本技能包装的原校验器。该入口不改 upstream 规则，增加检查覆盖数量和绑定 HTML 的 JSON 证据：
+当场景明确使用 social-card 种子或单页卡片时，仍可走原校验器：
 
 ```powershell
 node scripts/run_design_validator.cjs P/design/s01/index.html --style=swiss --expected-pages=1 --report=P/review/validator-s01-v1.json
 python scripts/design_review.py P --scene s01 --png design/s01/output.png --validator-report review/validator-s01-v1.json
-# 实际查看 PNG、读取原 qa-checklist 和校验报告后，填写生成的 pending 记录。
-python scripts/design_review.py P --scene s01 --import-report review/design-review-s01-<版本>.json
 ```
 
-Node 依赖按 runtime.md 安装到随附设计目录，包装入口会从该目录解析本地 Playwright；只有自定义安装位置时才设置 NODE_PATH。单幕设计默认要求恰好 1 个 section.poster；多页 HTML 明确传实际预期页数。0 页、数量不符、原规则 FAIL 或检查期间 HTML 变化都失败，报告不覆盖旧版本。不能直接调用原脚本的“0 fails”绕过覆盖检查。WARN 须依据实际图像记录处理理由，不能凑内容填密度。逐幕导入设计审核使用该幕独立 HTML 的 1 页报告；若视频壳仅接 PNG，校验对象仍是生成 PNG 的设计 HTML。
-
-交审前逐幕核对：plan 中的原配方与实际结构、原字体/主题与实际样式、PNG 的主体与手机可读性、原校验覆盖结果及 WARN 理由、所有场景的 design-review 记录。先直接看 PNG，确认每幕有单一主导信息、图文层级清楚、图片完整可见、没有空图槽或内部说明、没有把同一长标题重复放进图片和 HTML，也不需要靠大面积空白撑版面；任何一项成立都重新设计，不能因预检无报错而放行。缺失或失败先修复，不把“视频预检无字幕溢出、可以解码”称为设计通过。技术校验不会判断审美，也不能证明模型真实执行了阅读动作。
-
-准备命令填写 scene、content_key、files 哈希，status=pending、viewed=false；social card 路径带 --validator-report 时绑定原校验 JSON 与设计 HTML，视频原生模板路径直接绑定当前 HTML 与 PNG。导入/导出会重验报告覆盖和文件身份。旧审核记录保持兼容。实际审阅后填写 reviewer、observed，并据实设 viewed=true / status=pass；可保留原模板/入口哈希、校验结果与 WARN 理由等字段。导入复制到新 `.history/` 版本并设置 scenes[].design_review。内容有变重新准备；不能手改 content_key 使旧结论冒充新审阅。需要撤销时可将带实际观察结论的 rejected 记录通过同一命令导入为新版本，旧证据保留，正式导出会阻断。
-
-正式导出会重验该记录及 PNG 哈希、素材语义结论，审核字节变化会失效 QA；技术记录不证明作者真的看过，也不代替内容判断。现有历史项目不自动补写 pass。
+该 validator 检查 overflow、字号、密度等静态问题，不负责判定视频 scene 的审美、观看顺序或整片节奏。WARN 不得驱使添加无意义标签、卡片或装饰。
 
 ## 视频交接
 
-静态页优先直接接入原 PNG；画面文件、颜色、字体和排版不再由视频层重建。静态 PNG 与相同时间下的视频画面应一致，独立字幕层除外。若设计采用局部动画，由同一 DOM 的 renderAt 接口控制，核对静态与动态对应关系。
+静态构图通过后，保留 `window.renderAt(t,duration)` 确定性接口再加入 reveal / beat。Motion 负责：
 
-将 HTML、图片、字体与依赖写入项目，遵循 project.md；字幕区域及固定片尾的覆盖样式同样保留。播放器与导出都在场景 DOM 注入同一 caption_css / #vp-caption 字幕层，场景覆盖样式在两者中一致生效。先完成视觉查看再渲染视频，禁止同一个工具调用先返回截图、未查看就启动视频生产。
+- 建立注意顺序；
+- 展示状态变化；
+- 让关系在时间上更容易理解。
 
-设计变更重查对应场景并更新哈希，不覆盖已确认历史版本，不因仅换布局重做未变旁白。当前工作区的其他任务项目不因 Skill 修改自动重写。
+Motion 不负责：
 
-发布封面独立按 short-video-cover-title.md 交付，不把封面当作视频场景交接入口。
+- 给空画面补热闹；
+- 用飞入掩盖层级问题；
+- 让固定模板看起来“变化很多”。
+
+将 HTML、图片、字体与依赖写入项目，遵循 project.md；字幕区域及固定片尾的覆盖样式保留。播放器与导出都在场景 DOM 注入同一 caption layer。先完成视觉查看再渲染视频，不能在返回静态截图的同次调用里未检查就继续正式视频生产。
+
+设计变更会改变新项目的 visual_content_key，因为 scene design brief 被绑定进视觉 identity；旧项目没有 design_contract_version，不被强制迁移或失效。固定片尾仍走 brand-outro.md，不参与正文构图系统。

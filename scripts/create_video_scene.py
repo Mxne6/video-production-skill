@@ -10,7 +10,7 @@ from video_templates import (DEFAULT_STYLE, DEFAULT_THEME, VIDEO_MODES, VIDEO_PR
                              validate_visual_system)
 
 
-def create_video_scene(project, scene_id, template_id, style=None, theme=None):
+def create_video_scene(project, scene_id, template_id='adaptive', style=None, theme=None):
     p = Project(project)
     if any(scene['id'] == scene_id for scene in p.scenes()):
         raise ValueError('Scene ID already exists: ' + scene_id)
@@ -40,10 +40,14 @@ def create_video_scene(project, scene_id, template_id, style=None, theme=None):
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(
+        description='Create a content-first video scene. Named templates are optional compatibility starters.'
+    )
     parser.add_argument('project')
     parser.add_argument('--scene', required=True)
-    parser.add_argument('--type', dest='template_id', required=True, choices=sorted(VIDEO_TEMPLATES))
+    parser.add_argument('--type', dest='template_id', default='adaptive',
+                        choices=sorted(VIDEO_TEMPLATES),
+                        help='Optional starter geometry; defaults to adaptive content-first seed')
     parser.add_argument('--style', choices=sorted(VIDEO_MODES))
     parser.add_argument('--theme', choices=sorted(theme for values in VIDEO_MODES.values() for theme in values))
     args = parser.parse_args()

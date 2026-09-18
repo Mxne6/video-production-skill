@@ -7,6 +7,7 @@
 - `contract_version: 2`：新项目默认。每幕 `content_kind: factual / nonfactual` 分类覆盖旁白、页面文字和图片所表达的结论；factual 必须有 claim_ids，nonfactual 必须写 nonfactual_reason。程序检查缺项，作者仍需判断每项关键结论是否被证据支持。旧场景已有 claim_ids 时按 factual 检查，不机械重写项目；无引用的旧场景重新生产前需明确分类。分类变更会失效对应稿件身份。
 - `duration`（有用户时长要求时必填）：`{mode: "max" | "approx", seconds: 30, tolerance_seconds: 2}`。max 在发送付费请求前按已有音轨/剩余估时检查，导出前检查真实时间线，编码后检查容器实测时长，超限阻断；approx 超出容差仅报告 outside_target，不擅自加速。估时不是实际时长保证。未配置则明确报告 unspecified，不伪称满足上限。
 - `brand_component: "xyzchem-fixed-outro-v2"`：由 xyzchem preset 或片尾装配命令设置，配音前要求固定片尾为唯一最后一幕，且画幅兼容。
+- `design_contract_version: 1`：新建 xyzchem 项目默认写入。启用后正文 scene 必须在静态审核和正式生产前完成 `scenes[].design`；旧项目没有此字段时维持历史行为，不自动迁移。
 
 - `profile`: width/height（正偶数）、fps、caption_px。改变画幅必须重新设计 HTML；1920×1080、30fps、48px 是起点。
 - `visual_system`（竖版视频原生项目）：`{style,theme}`。`style` 为 `swiss` 或 `editorial`，`theme` 必须属于该风格的 social-card 官方 palette；整个项目固定一个模式和主题，逐幕不得混搭。
@@ -24,11 +25,13 @@
 
 稳定 `id`；`html` 指完整场景 HTML；`narration` 是唯一可读旁白；`intent / visual_notes / claim_ids / assets` 用于作者审核。
 
-竖版视频原生场景可同时记录 `template` 与 `theme`；`scenes/<id>/plan.json` 保存模板、语言、主题、尺寸及源文件哈希。模板字段说明创作起点，不等于该场景已填写、已配图或已审核。六类模板及命令见 design-inheritance.md。
+竖版视频原生场景可同时记录 `template` 与 `theme`；`scenes/<id>/plan.json` 保存 starter、语言、主题、尺寸及源文件哈希。新项目默认 `template: adaptive`；`opening / product-hero / mechanism / proof-data / application / summary` 只是兼容 starter。`template` 说明 HTML 创作起点，不决定最终几何，也不等于该场景已填写、已配图或已审核。命令见 design-inheritance.md。
+
+启用 design contract 时，每个非 brand-outro scene 必须有 `design`：`status / message / viewer_task / dominant / layout_family / layout_signature / attention_order / on_screen / narration_only / image_role / visual_share / density / intensity / contrast_with_previous / composition_reason / whitespace_reason / continuity_reason`。`status` 在构图判断完成前保持 `pending`，其余决策字段不预填假默认值；静态审核前改为 `ready`。`layout_signature` 描述真实视觉轮廓，不能写 template ID 或仅写 `image-led` 之类 family 名。字段语义与合法值见 composition-system.md。
 
 可选 `role: "brand-outro"` 标识公司收束；它仍是正常最后一幕，当前引擎不对 role 做特殊调度或自动补稿。品牌元数据只存资料，旁白在 scenes[].narration 保持唯一，详见 [公司收束场景](brand-outro.md)。
 
-`visual_plan: {medium,reason}` 记录媒介选择与表达理由，配音前预览工具据此检查素材引用；`estimated_duration` 为正数秒数，包含该幕停顿与尾部留白，配音前按帧取整用于预算检查，实测音轨到位后替代估时。图片资产额外记录 `sha256`，HTML 图片用 `data-asset-id` 绑定素材 ID，详见 [视觉规划](visual-planning.md)。图片原图比例与实际显示框不一致时，`object-fit: cover` 属于内容裁切而不是适配，预检必须阻断。
+`visual_plan: {medium,reason}` 记录媒介选择与表达理由。adaptive scene 初始可为 `medium: undecided`，但 scene design brief ready 后、任何 visual review 前必须明确改为 `typography / diagram / image / mixed`；`estimated_duration` 为正数秒数，包含该幕停顿与尾部留白，配音前按帧取整用于预算检查，实测音轨到位后替代估时。图片资产额外记录 `sha256`，HTML 图片用 `data-asset-id` 绑定素材 ID，详见 [视觉规划](visual-planning.md)。图片原图比例与实际显示框不一致时，`object-fit: cover` 属于内容裁切而不是适配，预检必须阻断。
 
 `dependencies` 显式列出由 JS 动态加载或 import 的本地资源；HTML/CSS 的 src、href、url() 会自动跟踪。不能引用整个项目目录充当依赖，否则破坏局部复用。画面不允许依赖未声明网络资源、系统时间或随机生成内容。生产环境字体应落到项目 assets 并通过 @font-face 引用，保证换机器可复现；测试可用已安装中文字体并记录运行环境。
 
@@ -53,6 +56,7 @@
 | 修改 | 需要更新 | 复用 |
 |---|---|---|
 | 图片/裁切/CSS | 该场景渲染、视听遮挡检查、最终封装 | 稿件、TTS、字幕文字与时间 |
+| scene design brief / 构图职责 | 该场景 visual identity、静态审核、sequence review、最终封装 | 未变稿件与 TTS |
 | 旁白字词、来源证据 | 受影响稿件确认、对应 TTS、音频确认、字幕、视频 | 其他场景 TTS/画面 |
 | 音色/速度/停顿/读音 | 对应 TTS 与下游 | 稿件文字确认、其他场景 |
 | 字幕分段 | 字幕、该幕画面、视听 QA | TTS、用户音频确认 |
@@ -69,4 +73,4 @@
 
 ## 当前能力边界
 
-`studio init` 的 generic 默认仍是 1920×1080，并继续使用 `assets/scene.html`；新义合成使用 `--preset xyzchem` 的 1080×1440，首个场景默认从 `opening` 视频模板创建。现有项目不会自动改变画幅、替换模板或补填未知时长。固定片尾只能通过显式 `attach_brand_outro.py` 装配，role 本身不触发导入。旧导出文件保留；重新生产时缺当前设计审核需按实际静态查看记录补齐，不自动伪造通过。
+`studio init` 的 generic 默认仍是 1920×1080，并继续使用 `assets/scene.html`；新义合成使用 `--preset xyzchem` 的 1080×1440，首个场景默认从低预设 `adaptive` seed 创建，并启用 content-first design contract。现有项目不会自动改变画幅、替换模板或补填未知时长。固定片尾只能通过显式 `attach_brand_outro.py` 装配，role 本身不触发导入。旧导出文件保留；重新生产时缺当前设计审核需按实际静态查看记录补齐，不自动伪造通过。

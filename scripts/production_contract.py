@@ -108,7 +108,9 @@ def check_design_record(p, s, report, accepted_status=('pass',)):
 
 def production_gate(p):
     from visual_review import validate_plan
+    from scene_design import assert_project_design
     check_spec(p)
+    assert_project_design(p)
     validate_plan(p)
     for s in p.scenes():
         content_check(p, s)

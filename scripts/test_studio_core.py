@@ -13,7 +13,7 @@ import attach_brand_outro
 import brand_components
 import create_brand_outro
 import studio
-from visual_review import cover_crop_mismatch, estimated_beats, parse_ratio
+from visual_review import build_contact_sheet, cover_crop_mismatch, estimated_beats, parse_ratio
 
 
 class StudioCoreTests(unittest.TestCase):
@@ -195,6 +195,21 @@ class StudioCoreTests(unittest.TestCase):
         scene['beats'][0]['after'] = 'not-a-prefix'
         with self.assertRaisesRegex(ValueError, 'exact narration prefix'):
             estimated_beats(scene, 4.0)
+
+    def test_visual_review_builds_sequence_contact_sheet(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            entries = []
+            for index in range(3):
+                path = root / f's{index + 1}.png'
+                Image.new('RGB', (1080, 1440), 'white').save(path)
+                entries.append((f's{index + 1:02d}', path))
+            target = root / 'contact.png'
+            build_contact_sheet(entries, target, 1080, 1440)
+            self.assertTrue(target.is_file())
+            with Image.open(target) as sheet:
+                self.assertEqual(sheet.width, 270 * 3)
+                self.assertGreater(sheet.height, 360)
 
     def test_visual_review_blocks_cover_crop_for_mismatched_image_ratio(self):
         self.assertEqual(parse_ratio('3:4'), .75)
