@@ -1,0 +1,12 @@
+{
+  "source": "projects\\product-0238\\design\\company-outro-v2\\index.html",
+  "sha256": "020b2f4932be761fb50d23ddf2e1d813e43b8a34790fc429f00cdc90a987d09c",
+  "layout": "contact-free company-neutral-v1, adapted from the original S07 layout",
+  "changes": [
+    "neutral company and product information only",
+    "transparent original logo, CSS positioning",
+    "removed phone, website, QR, enquiry and visit prompts",
+    "company and technical-information footer",
+    "product/theme parameterization; narration from per-language component.json"
+  ]
+}

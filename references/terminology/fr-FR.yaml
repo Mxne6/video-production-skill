@@ -1,0 +1,7 @@
+# Approved French terminology for video scripts. Extend per product after source verification.
+language: fr-FR
+locale: France
+terms:
+  product_model: "Keep the official model unchanged"
+  company_name: "Nanjing Xinyi Synthesis Technology Co., Ltd."
+  unit_policy: "Preserve source units and performance conditions"

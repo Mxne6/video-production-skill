@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="{{LANG}}" data-mode="{{STYLE}}" {{VISUAL_ATTRIBUTE}}>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Proof and data scene</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=Noto+Sans+SC:wght@200;300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap">
+  <link rel="stylesheet" href="video-template.css">
+</head>
+<body>
+  <main class="scene proof" data-scene>
+    <header class="rail">
+      <span>Evidence</span>
+      <span>04</span>
+    </header>
+    <div class="proof-shell">
+      <section class="proof-head" data-safe-check>
+        <p class="eyebrow" data-reveal>Evidence / comparison</p>
+        <h1 data-reveal data-delay="0.08">Make the evidence easy to verify.</h1>
+      </section>
+      <figure class="proof-visual" data-safe-check>
+        <div class="media-placeholder" data-asset-slot="proof-visual">Test result, chart, or evidence image.</div>
+      </figure>
+      <section class="metric-grid" data-safe-check>
+        <article class="metric-card" data-reveal data-delay="0.28">
+          <span class="metric-label">Primary result</span>
+          <strong class="metric-value">00%</strong>
+        </article>
+        <article class="metric-card" data-reveal data-delay="0.38">
+          <span class="metric-label">Comparison</span>
+          <strong class="metric-value">0.0×</strong>
+        </article>
+      </section>
+      <p class="source-note" data-reveal data-delay="0.68">Source: replace with document name, test method, and locator.</p>
+    </div>
+  </main>
+  <script src="video-template.js"></script>
+</body>
+</html>

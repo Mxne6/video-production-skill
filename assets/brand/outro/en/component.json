@@ -1,0 +1,25 @@
+{
+  "id": "xyzchem-fixed-outro-en-v1",
+  "language": "en",
+  "company": "Nanjing Xinyi Synthesis Technology Co., Ltd.",
+  "company_source": {
+    "url": "https://www.xyzchem.com/en/",
+    "quote": "Nanjing Xinyi Synthesis Technology Co., Ltd.",
+    "locator": "page title and footer",
+    "checked_at": "2026-09-10",
+    "status": "candidate"
+  },
+  "template": "assets/brand/outro/en/template.html",
+  "narration": "This product is brought to you by Nanjing Xinyi Synthesis Technology Co., Ltd.",
+  "caption_phrases": [
+    "This product is brought to you by ",
+    "Nanjing Xinyi Synthesis ",
+    "Technology Co., Ltd."
+  ],
+  "script_status": "pending_confirmation",
+  "voice_status": "candidate_not_auditioned",
+  "tail_seconds": 1.5,
+  "estimated_duration_seconds": 4.2,
+  "audio_policy": "Generate this narration with the complete approved script; do not reuse a fixed or cross-language recording.",
+  "reuse_policy": "No fixed recording. The outro uses the project voice and follows the same TTS, listening and caption workflow as every other scene."
+}

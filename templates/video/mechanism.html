@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="{{LANG}}" data-mode="{{STYLE}}" {{VISUAL_ATTRIBUTE}}>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mechanism scene</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=Noto+Sans+SC:wght@200;300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap">
+  <link rel="stylesheet" href="video-template.css">
+</head>
+<body>
+  <main class="scene mechanism" data-scene>
+    <header class="rail">
+      <span>Mechanism</span>
+      <span>03</span>
+    </header>
+    <div class="mechanism-shell">
+      <section class="mechanism-head" data-safe-check>
+        <p class="eyebrow" data-reveal>Mechanism</p>
+        <h1 data-reveal data-delay="0.08">Explain how the result is produced.</h1>
+      </section>
+      <figure class="mechanism-visual" data-safe-check>
+        <div class="media-placeholder" data-asset-slot="mechanism-visual">Material, structure, or mechanism visual.</div>
+      </figure>
+      <section class="mechanism-flow">
+        <article class="flow-card" data-safe-check data-reveal data-delay="0.28">
+          <span class="flow-index">STEP 01</span>
+          <h2>Input</h2>
+        </article>
+        <article class="flow-card" data-safe-check data-reveal data-delay="0.4">
+          <span class="flow-index">STEP 02</span>
+          <h2>Mechanism</h2>
+        </article>
+        <article class="flow-card" data-safe-check data-reveal data-delay="0.52">
+          <span class="flow-index">STEP 03</span>
+          <h2>Result</h2>
+        </article>
+      </section>
+    </div>
+  </main>
+  <script src="video-template.js"></script>
+</body>
+</html>

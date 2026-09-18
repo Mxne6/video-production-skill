@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="{{LANG}}" data-mode="{{STYLE}}" {{VISUAL_ATTRIBUTE}}>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Application scene</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=Noto+Sans+SC:wght@200;300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap">
+  <link rel="stylesheet" href="video-template.css">
+</head>
+<body>
+  <main class="scene application" data-scene>
+    <header class="rail">
+      <span>Application</span>
+      <span>05</span>
+    </header>
+    <div class="application-shell">
+      <section class="application-copy" data-safe-check>
+        <p class="eyebrow" data-reveal>Application / operating context</p>
+        <h1 data-reveal data-delay="0.08">Place the product in a real process.</h1>
+        <p class="lede" data-reveal data-delay="0.2">Add one operating condition.</p>
+      </section>
+      <figure class="application-media" data-safe-check>
+        <div class="media-placeholder" data-asset-slot="application-context">Application image.</div>
+      </figure>
+    </div>
+  </main>
+  <script src="video-template.js"></script>
+</body>
+</html>

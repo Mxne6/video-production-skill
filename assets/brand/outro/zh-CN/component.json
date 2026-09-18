@@ -1,0 +1,14 @@
+{
+  "id": "xyzchem-fixed-outro-v2",
+  "company": "南京新义合成科技有限公司",
+  "template": "assets/brand/outro/zh-CN/template.html",
+  "narration": "本期产品由南京新义合成科技有限公司提供。",
+  "caption_phrases": [
+    "本期产品由",
+    "南京新义合成科技有限公司提供。"
+  ],
+  "tail_seconds": 1.5,
+  "estimated_duration_seconds": 3.7,
+  "audio_policy": "Generate this narration with the complete approved script; do not reuse a fixed recording.",
+  "reuse_policy": "No fixed recording. The outro uses the project voice and follows the same TTS, listening and caption workflow as every other scene."
+}

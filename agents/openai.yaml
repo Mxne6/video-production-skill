@@ -1,0 +1,4 @@
+interface:
+  display_name: "中英文视频生产"
+  short_description: "从材料、分镜和素材到中文或英语旁白、真实字幕及可播放视频，支持审核续作和局部修改"
+  default_prompt: "使用 $video-production，把我提供的材料做成完整中文或英语讲解视频，并在合成旁白前让我审核稿件。"
